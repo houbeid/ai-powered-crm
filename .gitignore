@@ -1,0 +1,31 @@
+#backend
+bin/
+obj/
+*.user
+*.suo
+.vs/
+*.log
+*.cache
+appsettings.Development.json
+
+# NuGet
+*.nupkg
+.nuget/
+packages/
+
+#os
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Visual Studio
+.vs/
+*.rsuser
+*.userosscache
+*.sln.docstates
+
+# Visual Studio Code
+.vscode/
+
+# JetBrains
+.idea/
