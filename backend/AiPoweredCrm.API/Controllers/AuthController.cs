@@ -18,29 +18,17 @@ namespace AiPoweredCrm.API.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto dto)
         {
-            try
-            {
-                var message = await _authService.RegisterAsync(dto);
-                return Ok(new { message });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
+            var message = await _authService.RegisterAsync(dto);
+            return Ok(new { message });
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto dto)
         {
-            try
-            {
-                var token = await _authService.LoginAsync(dto);
-                return Ok(new { token });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
+           
+            var token = await _authService.LoginAsync(dto);
+            return Ok(new { token });
+           
         }
     }
 }

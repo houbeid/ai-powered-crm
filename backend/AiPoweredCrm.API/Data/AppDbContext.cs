@@ -30,6 +30,9 @@ namespace AiPoweredCrm.API.Data
                 .WithMany(c => c.Deals)
                 .HasForeignKey(d => d.ClientId)
                 .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<Deal>()
+                .Property(d => d.Status)
+                .HasConversion<string>();
         }
     }
 }

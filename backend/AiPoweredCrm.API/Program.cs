@@ -1,4 +1,5 @@
 using AiPoweredCrm.API.Data;
+using AiPoweredCrm.API.Middleware;
 using AiPoweredCrm.API.Repositories;
 using AiPoweredCrm.API.Repositories.Interfaces;
 using AiPoweredCrm.API.Services;
@@ -16,6 +17,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IClientRepository, ClientRepository>();
+builder.Services.AddScoped<IClientService, ClientService>();
+builder.Services.AddScoped<IDealRepository, DealRepository>();
+builder.Services.AddScoped<IDealService, DealService>();
 
 // Database
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -68,10 +73,19 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseMiddleware<ExceptionMiddleware>();
 app.UseHttpsRedirection();
 app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
+// Seed Data
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    await SeedData.InitializeAsync(context);
+}
+
+app.Run();
 app.Run();
