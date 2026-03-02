@@ -1,4 +1,5 @@
 ﻿using AiPoweredCrm.API.DTOs.Deal;
+using AiPoweredCrm.API.Services;
 using AiPoweredCrm.API.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -7,114 +8,78 @@ namespace AiPoweredCrm.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
+    //[Authorize]
     public class DealsController : ControllerBase
     {
         private readonly IDealService _dealService;
+        private readonly IAiService _aiService;
 
-        public DealsController(IDealService dealService)
+        public DealsController(IDealService dealService, IAiService aiService)
         {
             _dealService = dealService;
+            _aiService = aiService;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            try
-            {
-                var deals = await _dealService.GetAllAsync();
-                return Ok(deals);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = ex.Message });
-            }
+            var deals = await _dealService.GetAllAsync();
+            return Ok(deals);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            try
-            {
-                var deal = await _dealService.GetByIdAsync(id);
-                if (deal == null)
-                    return NotFound(new { message = "Deal not found" });
-                return Ok(deal);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = ex.Message });
-            }
+            var deal = await _dealService.GetByIdAsync(id);
+            if (deal == null)
+                return NotFound(new { message = "Deal not found" });
+            return Ok(deal);
         }
 
         [HttpGet("client/{clientId}")]
         public async Task<IActionResult> GetByClientId(int clientId)
         {
-            try
-            {
-                var deals = await _dealService.GetByClientIdAsync(clientId);
-                return Ok(deals);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = ex.Message });
-            }
+            var deals = await _dealService.GetByClientIdAsync(clientId);
+            return Ok(deals);
         }
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] DealCreateDto dto)
         {
-            try
-            {
-                var deal = await _dealService.CreateAsync(dto);
-                return CreatedAtAction(nameof(GetById), new { id = deal.Id }, deal);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
+            var deal = await _dealService.CreateAsync(dto);
+            return CreatedAtAction(nameof(GetById), new { id = deal.Id }, deal);
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] DealCreateDto dto)
         {
-            try
-            {
-                var deal = await _dealService.UpdateAsync(id, dto);
-                return Ok(deal);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
+            var deal = await _dealService.UpdateAsync(id, dto);
+            return Ok(deal);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            try
-            {
-                await _dealService.DeleteAsync(id);
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
+            await _dealService.DeleteAsync(id);
+            return NoContent();
         }
 
         [HttpPatch("{id}/status")]
         public async Task<IActionResult> UpdateStatus(int id, [FromBody] UpdateStatusDto dto)
         {
-            try
-            {
-                var deal = await _dealService.UpdateStatusAsync(id, dto.Status);
-                return Ok(deal);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
+            var deal = await _dealService.UpdateStatusAsync(id, dto.Status);
+            return Ok(deal);
+        }
+
+        [HttpPost("{id}/ai-advice")]
+        public async Task<IActionResult> GetAiAdvice(int id)
+        {
+            var deal = await _dealService.GetByIdAsync(id);
+            if (deal == null)
+                return NotFound(new { message = "Deal not found" });
+
+            var advice = await _aiService.GetDealAdviceAsync(deal);
+            return Ok(advice);
         }
     }
 }

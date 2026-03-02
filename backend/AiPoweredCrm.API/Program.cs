@@ -21,6 +21,7 @@ builder.Services.AddScoped<IClientRepository, ClientRepository>();
 builder.Services.AddScoped<IClientService, ClientService>();
 builder.Services.AddScoped<IDealRepository, DealRepository>();
 builder.Services.AddScoped<IDealService, DealService>();
+builder.Services.AddHttpClient<IAiService, AiService>();
 
 // Database
 builder.Services.AddDbContext<AppDbContext>(options =>
