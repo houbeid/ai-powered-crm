@@ -1,18 +1,21 @@
 using AiPoweredCrm.API.Data;
-using Microsoft.EntityFrameworkCore;
+using AiPoweredCrm.API.Repositories;
+using AiPoweredCrm.API.Repositories.Interfaces;
+using AiPoweredCrm.API.Services;
+using AiPoweredCrm.API.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ================================
 // Services
-// ================================
-
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 // Database
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -55,9 +58,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-// ================================
 // App
-// ================================
 
 var app = builder.Build();
 
