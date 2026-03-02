@@ -20,8 +20,8 @@ namespace AiPoweredCrm.API.Controllers
         {
             try
             {
-                var token = await _authService.RegisterAsync(dto);
-                return Ok(new { token });
+                var message = await _authService.RegisterAsync(dto);
+                return Ok(new { message });
             }
             catch (Exception ex)
             {
