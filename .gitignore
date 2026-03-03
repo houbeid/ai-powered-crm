@@ -8,6 +8,11 @@ obj/
 *.cache
 appsettings.Development.json
 
+# Frontend
+node_modules/
+.env
+.env.local
+
 # NuGet
 *.nupkg
 .nuget/
