@@ -1,17 +1,50 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
+import { useAuth } from './features/auth/hooks/useAuth'
 import LoginPage from './features/auth/pages/LoginPage'
+import DashboardPage from './features/dashboard/pages/DashboardPage'
 import ClientsPage from './features/clients/pages/ClientsPage'
 import ClientDetailPage from './features/clients/pages/ClientDetailPage'
-import DashboardPage from './features/dashboard/pages/DashboardPage'
+import DealsPage from './features/deals/pages/DealsPage'
+
+// Route protégée
+const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
+  const { isAuthenticated } = useAuth()
+  return isAuthenticated ? <>{children}</> : <Navigate to="/login" />
+}
 
 function App() {
   return (
     <Routes>
+      {/* Route publique */}
       <Route path="/login" element={<LoginPage />} />
-      <Route path="/dashboard" element={<DashboardPage />} />
-      <Route path="/clients" element={<ClientsPage />} />
-      <Route path="/clients/:id" element={<ClientDetailPage />} />
-      <Route path="*" element={<Navigate to="/login" />} />
+
+      {/* Routes protégées */}
+      <Route path="/dashboard" element={
+        <PrivateRoute>
+          <DashboardPage />
+        </PrivateRoute>
+      } />
+
+      <Route path="/clients" element={
+        <PrivateRoute>
+          <ClientsPage />
+        </PrivateRoute>
+      } />
+
+      <Route path="/clients/:id" element={
+        <PrivateRoute>
+          <ClientDetailPage />
+        </PrivateRoute>
+      } />
+
+      <Route path="/deals" element={
+        <PrivateRoute>
+          <DealsPage />
+        </PrivateRoute>
+      } />
+
+      {/* Redirect par défaut */}
+      <Route path="*" element={<Navigate to="/dashboard" />} />
     </Routes>
   )
 }

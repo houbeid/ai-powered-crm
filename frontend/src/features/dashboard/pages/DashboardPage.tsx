@@ -26,13 +26,14 @@ const DashboardPage = () => {
       ])
       setClients(clientsData)
       setDeals(dealsData)
-    } catch {
-      console.error('Error fetching dashboard data')
+    } catch (error) {
+      console.error('Error:', error)
     } finally {
       setLoading(false)
     }
-  }
+  }  // ← fetchData se termine ici
 
+  // ← Ces calculs sont EN DEHORS de fetchData
   const wonDeals = deals.filter(d => d.status === 'Won')
   const inProgressDeals = deals.filter(d => d.status === 'InProgress')
   const totalAmount = wonDeals.reduce((sum, d) => sum + d.amount, 0)
@@ -58,7 +59,6 @@ const DashboardPage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
         {/* Header */}
@@ -121,9 +121,7 @@ const DashboardPage = () => {
         {/* Recent Deals */}
         <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
-            <h2 className="text-lg font-semibold text-gray-800">
-              Recent Deals
-            </h2>
+            <h2 className="text-lg font-semibold text-gray-800">Recent Deals</h2>
             <button
               onClick={() => navigate('/deals')}
               className="text-blue-600 text-sm hover:underline"
@@ -140,18 +138,10 @@ const DashboardPage = () => {
             <table className="w-full">
               <thead className="bg-gray-50 border-b border-gray-100">
                 <tr>
-                  <th className="text-left px-6 py-3 text-sm font-medium text-gray-500">
-                    Title
-                  </th>
-                  <th className="text-left px-6 py-3 text-sm font-medium text-gray-500">
-                    Client
-                  </th>
-                  <th className="text-left px-6 py-3 text-sm font-medium text-gray-500">
-                    Amount
-                  </th>
-                  <th className="text-left px-6 py-3 text-sm font-medium text-gray-500">
-                    Status
-                  </th>
+                  <th className="text-left px-6 py-3 text-sm font-medium text-gray-500">Title</th>
+                  <th className="text-left px-6 py-3 text-sm font-medium text-gray-500">Client</th>
+                  <th className="text-left px-6 py-3 text-sm font-medium text-gray-500">Amount</th>
+                  <th className="text-left px-6 py-3 text-sm font-medium text-gray-500">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
@@ -161,15 +151,9 @@ const DashboardPage = () => {
                     className="hover:bg-gray-50 transition-colors cursor-pointer"
                     onClick={() => navigate('/deals')}
                   >
-                    <td className="px-6 py-4 text-sm font-medium text-gray-800">
-                      {deal.title}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-600">
-                      {deal.client?.companyName}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-600">
-                      ${deal.amount.toLocaleString()}
-                    </td>
+                    <td className="px-6 py-4 text-sm font-medium text-gray-800">{deal.title}</td>
+                    <td className="px-6 py-4 text-sm text-gray-600">{deal.client?.companyName}</td>
+                    <td className="px-6 py-4 text-sm text-gray-600">${deal.amount.toLocaleString()}</td>
                     <td className="px-6 py-4">
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusBadge(deal.status)}`}>
                         {deal.status}

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authService } from '../services/authService';
 import { useAuth } from '../hooks/useAuth';
@@ -23,6 +23,14 @@ const LoginPage = () => {
     email: '',
     password: ''
   });
+
+  // Efface le message succès automatiquement après 3 secondes
+  useEffect(() => {
+    if (success) {
+      const timer = setTimeout(() => setSuccess(null), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [success]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,7 +67,6 @@ const LoginPage = () => {
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
       <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
-
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800">AI Powered CRM</h1>
@@ -113,7 +120,7 @@ const LoginPage = () => {
                 type="email"
                 required
                 value={loginForm.email}
-                onChange={e => setLoginForm({ ...loginForm, email: e.target.value })}
+                onChange={e => { setLoginForm({ ...loginForm, email: e.target.value }); setSuccess(null); }}
                 className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="john@example.com"
               />
@@ -126,7 +133,7 @@ const LoginPage = () => {
                 type="password"
                 required
                 value={loginForm.password}
-                onChange={e => setLoginForm({ ...loginForm, password: e.target.value })}
+                onChange={e => { setLoginForm({ ...loginForm, password: e.target.value }); setSuccess(null); }}
                 className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="••••••"
               />
@@ -150,7 +157,7 @@ const LoginPage = () => {
                 type="text"
                 required
                 value={registerForm.fullName}
-                onChange={e => setRegisterForm({ ...registerForm, fullName: e.target.value })}
+                onChange={e => { setRegisterForm({ ...registerForm, fullName: e.target.value }); setSuccess(null); }}
                 className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="John Doe"
               />
@@ -163,7 +170,7 @@ const LoginPage = () => {
                 type="email"
                 required
                 value={registerForm.email}
-                onChange={e => setRegisterForm({ ...registerForm, email: e.target.value })}
+                onChange={e => { setRegisterForm({ ...registerForm, email: e.target.value }); setSuccess(null); }}
                 className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="john@example.com"
               />
@@ -177,7 +184,7 @@ const LoginPage = () => {
                 required
                 minLength={6}
                 value={registerForm.password}
-                onChange={e => setRegisterForm({ ...registerForm, password: e.target.value })}
+                onChange={e => { setRegisterForm({ ...registerForm, password: e.target.value }); setSuccess(null); }}
                 className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="••••••"
               />

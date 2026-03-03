@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AiPoweredCrm.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260302050216_AddDealStatusAsString")]
-    partial class AddDealStatusAsString
+    [Migration("20260303052400_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
