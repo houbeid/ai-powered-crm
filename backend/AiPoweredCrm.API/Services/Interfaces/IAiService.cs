@@ -4,6 +4,6 @@ namespace AiPoweredCrm.API.Services.Interfaces
 {
     public interface IAiService
     {
-        Task<AiAdviceResponseDto> GetDealAdviceAsync(DealResponseDto deal);
+        Task<AiAdviceResponseDto> GetDealAdviceAsync(DealResponseDto deal, List<DealResponseDto> similarDeals);
     }
 }

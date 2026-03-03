@@ -78,7 +78,13 @@ namespace AiPoweredCrm.API.Controllers
             if (deal == null)
                 return NotFound(new { message = "Deal not found" });
 
-            var advice = await _aiService.GetDealAdviceAsync(deal);
+            // Récupère les deals similaires déjà Won
+            var allDeals = await _dealService.GetAllAsync();
+            var similarDeals = allDeals
+                .Where(d => d.Status == "Won" && d.Id != id)
+                .ToList();
+
+            var advice = await _aiService.GetDealAdviceAsync(deal, similarDeals);
             return Ok(advice);
         }
     }

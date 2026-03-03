@@ -3,7 +3,6 @@ using AiPoweredCrm.API.Services.Interfaces;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace AiPoweredCrm.API.Services
 {
@@ -20,7 +19,7 @@ namespace AiPoweredCrm.API.Services
             _logger = logger;
         }
 
-        public async Task<AiAdviceResponseDto> GetDealAdviceAsync(DealResponseDto deal)
+        public async Task<AiAdviceResponseDto> GetDealAdviceAsync(DealResponseDto deal, List<DealResponseDto> similarDeals)
         {
             try
             {
@@ -30,7 +29,7 @@ namespace AiPoweredCrm.API.Services
                 _httpClient.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Bearer", apiKey);
 
-                var prompt = BuildPrompt(deal);
+                var prompt = BuildPrompt(deal, similarDeals);
 
                 var requestBody = new
                 {
@@ -40,7 +39,7 @@ namespace AiPoweredCrm.API.Services
                         new
                         {
                             role = "system",
-                            content = "You are an expert B2B sales coach. Analyze deals and provide actionable advice to help sales representatives close deals successfully. Always respond in JSON format only."
+                            content = "You are an expert B2B sales coach with deep knowledge of enterprise sales strategies. You analyze deals using a structured chain of thought approach and provide actionable advice based on historical data. Always respond in JSON format only."
                         },
                         new
                         {
@@ -49,7 +48,7 @@ namespace AiPoweredCrm.API.Services
                         }
                     },
                     response_format = new { type = "json_object" },
-                    max_tokens = 1000,
+                    max_tokens = 1500,
                     temperature = 0.7
                 };
 
@@ -86,23 +85,40 @@ namespace AiPoweredCrm.API.Services
             }
         }
 
-        private string BuildPrompt(DealResponseDto deal)
+        private string BuildPrompt(DealResponseDto deal, List<DealResponseDto> similarDeals)
         {
-            return $@"Analyze this B2B deal and provide sales advice:
+            var similarDealsText = similarDeals.Any()
+                ? string.Join("\n", similarDeals.Select(d =>
+                    $"- Title: {d.Title} | Client: {d.Client?.CompanyName} | Amount: ${d.Amount:N2}"))
+                : "No similar won deals found yet.";
 
-            Deal Information:
+            return $@"You are analyzing a B2B sales deal. Follow these steps carefully:
+
+            STEP 1 - ANALYZE THE CURRENT DEAL:
             - Title: {deal.Title}
             - Description: {deal.Description}
             - Amount: ${deal.Amount:N2}
             - Status: {deal.Status}
             - Client: {deal.Client?.CompanyName ?? "Unknown"}
 
-            Please respond with a JSON object containing exactly these fields:
+            STEP 2 - REVIEW SIMILAR DEALS ALREADY WON BY OUR TEAM:
+            {similarDealsText}
+
+            STEP 3 - IDENTIFY OBSTACLES:
+            Based on the deal context and similar won deals, identify the main obstacles.
+
+            STEP 4 - CRAFT RECOMMENDATIONS:
+            Based on what worked in similar won deals, provide specific actionable recommendations.
+
+            STEP 5 - CREATE CLOSING ARGUMENT:
+            Using the success of similar deals as proof, craft a personalized closing argument.
+
+            Respond with a JSON object containing exactly these fields:
             {{
-                ""Analysis"": ""Brief analysis of the deal situation"",
-                ""Obstacles"": ""Potential obstacles that could prevent closing"",
-                ""Recommendations"": ""Specific actions to take to move the deal forward"",
-                ""ClosingArgument"": ""The best argument to convince the client to buy""
+                ""Analysis"": ""Detailed analysis of the deal based on similar won deals and current context"",
+                ""Obstacles"": ""Top obstacles that could prevent closing this deal"",
+                ""Recommendations"": ""Specific actions based on what worked in similar won deals"",
+                ""ClosingArgument"": ""Personalized closing argument using similar won deals as social proof""
             }}";
         }
 
