@@ -78,7 +78,7 @@ builder.Services.AddScoped<IDealRepository, DealRepository>();
 builder.Services.AddScoped<IDealService, DealService>();
 
 // =============================
-// AI SERVICE (OpenRouter)
+// AI SERVICE
 // =============================
 
 builder.Services.AddHttpClient<IAiService, AiService>((serviceProvider, client) =>
@@ -130,9 +130,12 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:5173")
-              .AllowAnyHeader()
-              .AllowAnyMethod();
+        policy.WithOrigins(
+            "http://localhost:5173",
+            "https://ton-app.vercel.app"  // ← ajoute ton URL Vercel après déploiement
+        )
+        .AllowAnyHeader()
+        .AllowAnyMethod();
     });
 });
 
@@ -142,15 +145,10 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseMiddleware<ExceptionMiddleware>();
-
-app.UseHttpsRedirection();
 
 app.UseCors("AllowFrontend");
 
@@ -160,7 +158,7 @@ app.UseAuthorization();
 app.MapControllers();
 
 // =============================
-// SEED DATA
+// MIGRATIONS + SEED DATA
 // =============================
 
 using (var scope = app.Services.CreateScope())
@@ -168,6 +166,7 @@ using (var scope = app.Services.CreateScope())
     var context = scope.ServiceProvider
         .GetRequiredService<AppDbContext>();
 
+    await context.Database.MigrateAsync(); // ← migrations automatiques
     await SeedData.InitializeAsync(context);
 }
 
