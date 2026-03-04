@@ -58,7 +58,7 @@ const LoginPage = () => {
       setRegisterForm({ fullName: '', email: '', password: '' })
       setSuccess(response.message)
       
-      // Bascule vers login après 2 secondes
+  
       setTimeout(() => {
         setIsLogin(true)
         setSuccess(null)

@@ -39,7 +39,6 @@ namespace AiPoweredCrm.API.Services
 
         public async Task<DealResponseDto> CreateAsync(DealCreateDto dto)
         {
-            // Vérifier si le client existe
             if (!await _clientRepository.ExistsAsync(dto.ClientId))
                 throw new Exception("Client not found");
 

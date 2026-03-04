@@ -25,7 +25,6 @@ namespace AiPoweredCrm.API.Services
 
         public async Task<string> RegisterAsync(RegisterDto dto)
         {
-            // Vérifier si l'email existe déjà
             if (await _userRepository.ExistsAsync(dto.Email))
                 throw new Exception("Email already exists");
             var passwordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);

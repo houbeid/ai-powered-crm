@@ -12,9 +12,6 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// =============================
-// SERVICES
-// =============================
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -53,9 +50,6 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-// =============================
-// DATABASE
-// =============================
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(
@@ -66,10 +60,6 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     )
 );
 
-// =============================
-// REPOSITORIES & SERVICES
-// =============================
-
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IClientRepository, ClientRepository>();
@@ -77,9 +67,6 @@ builder.Services.AddScoped<IClientService, ClientService>();
 builder.Services.AddScoped<IDealRepository, DealRepository>();
 builder.Services.AddScoped<IDealService, DealService>();
 
-// =============================
-// AI SERVICE
-// =============================
 
 builder.Services.AddHttpClient<IAiService, AiService>((serviceProvider, client) =>
 {
@@ -96,9 +83,6 @@ builder.Services.AddHttpClient<IAiService, AiService>((serviceProvider, client) 
     client.DefaultRequestHeaders.Add("X-Title", "AiPoweredCrm");
 });
 
-// =============================
-// JWT AUTHENTICATION
-// =============================
 
 var jwtKey = builder.Configuration["Jwt:Key"];
 var jwtIssuer = builder.Configuration["Jwt:Issuer"];
@@ -122,9 +106,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 
-// =============================
-// CORS
-// =============================
 
 builder.Services.AddCors(options =>
 {
@@ -140,9 +121,6 @@ builder.Services.AddCors(options =>
     });
 });
 
-// =============================
-// APP PIPELINE
-// =============================
 
 var app = builder.Build();
 
@@ -158,16 +136,13 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-// =============================
-// MIGRATIONS + SEED DATA
-// =============================
 
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider
         .GetRequiredService<AppDbContext>();
 
-    await context.Database.MigrateAsync(); // ← migrations automatiques
+    await context.Database.MigrateAsync();
     await SeedData.InitializeAsync(context);
 }
 

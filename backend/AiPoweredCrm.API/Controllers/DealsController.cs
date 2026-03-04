@@ -8,7 +8,7 @@ namespace AiPoweredCrm.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    //[Authorize]
+    [Authorize]
     public class DealsController : ControllerBase
     {
         private readonly IDealService _dealService;
