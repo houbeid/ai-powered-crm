@@ -132,7 +132,8 @@ builder.Services.AddCors(options =>
     {
         policy.WithOrigins(
             "http://localhost:5173",
-            "https://ton-app.vercel.app"  // ← ajoute ton URL Vercel après déploiement
+            "https://ai-powered-crm-production.up.railway.app",
+            "https://ai-powered-crm-mu.vercel.app"
         )
         .AllowAnyHeader()
         .AllowAnyMethod();
