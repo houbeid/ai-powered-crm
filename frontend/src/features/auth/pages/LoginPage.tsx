@@ -49,20 +49,24 @@ const LoginPage = () => {
   };
 
   const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setLoading(true);
+    e.preventDefault()
+    setError(null)
+    setLoading(true)
 
     try {
-      const response = await authService.register(registerForm);
-      setSuccess(response.message);
-      setIsLogin(true);
+      const response = await authService.register(registerForm)
+      setSuccess(response.message)
+      
+      // ← Ajoute ces 2 lignes
+      setRegisterForm({ fullName: '', email: '', password: '' })
+      setIsLogin(true) // ← bascule vers le formulaire login
+      
     } catch {
-      setError('Registration failed. Please try again.');
+      setError('Registration failed. Please try again.')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
