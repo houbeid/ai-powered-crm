@@ -55,11 +55,14 @@ const LoginPage = () => {
 
     try {
       const response = await authService.register(registerForm)
+      setRegisterForm({ fullName: '', email: '', password: '' })
       setSuccess(response.message)
       
-      // ← Ajoute ces 2 lignes
-      setRegisterForm({ fullName: '', email: '', password: '' })
-      setIsLogin(true) // ← bascule vers le formulaire login
+      // Bascule vers login après 2 secondes
+      setTimeout(() => {
+        setIsLogin(true)
+        setSuccess(null)
+      }, 2000)
       
     } catch {
       setError('Registration failed. Please try again.')
