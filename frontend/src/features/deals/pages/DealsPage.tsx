@@ -195,12 +195,23 @@ const DealsPage = () => {
                         >
                           Status
                         </button>
-                        <button
-                          onClick={() => handleAiAdvice(deal)}
-                          className="bg-purple-50 text-purple-600 px-3 py-1 rounded-lg text-xs font-medium hover:bg-purple-100 transition-colors"
-                        >
-                           AI
-                        </button>
+
+                        {deal.status === 'New' || deal.status === 'InProgress' ? (
+                          <button
+                            onClick={() => handleAiAdvice(deal)}
+                            className="bg-purple-50 text-purple-600 px-3 py-1 rounded-lg text-xs font-medium hover:bg-purple-100 transition-colors"
+                          >
+                             AI
+                          </button>
+                        ) : deal.status === 'Lost' ? (
+                          <button
+                            onClick={() => handleAiAdvice(deal)}
+                            className="bg-orange-50 text-orange-600 px-3 py-1 rounded-lg text-xs font-medium hover:bg-orange-100 transition-colors"
+                          >
+                             Recovery
+                          </button>
+                        ) : null}
+
                         <button
                           onClick={() => handleDelete(deal.id)}
                           disabled={deleteLoading === deal.id}
